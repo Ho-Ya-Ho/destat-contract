@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import { log } from "console";
+import { privateEncrypt } from "crypto";
 import { network } from "hardhat";
 
 interface Question {
@@ -18,27 +20,45 @@ it("Survey_init", async () => {
     },
   ];
 
-  const s = await ethers.deployContract("Survey", [
-    title,
-    description,
-    questions,
+  const factory = await ethers.deployContract("SurveyFactory", [
+    ethers.parseEther("50"),
+    ethers.parseEther("0.1"),
   ]);
+  const tx = await factory.createSurvey(
+    {
+      title,
+      description,
+      targetNumber: 100,
+      questions,
+    },
+    { value: ethers.parseEther("100") },
+  );
 
-  const _title = await s.title();
-  const _desc = await s.description();
-  const _questions = (await s.getQuestions()) as Question[];
-  expect(_title).eq(title);
-  expect(_desc).eq(description);
-  expect(_questions[0].options).deep.eq(questions[0].options);
-
-  const signers = await ethers.getSigners();
-  const respondent = signers[1];
-
-  await s.connect(respondent);
-  await s.submitAnswer({
-    respondent: respondent.address,
-    answers: [1],
+  const receipt = await tx.wait();
+  let surveyAddress;
+  receipt?.logs?.forEach((log) => {
+    const event = factory.interface.parseLog(log);
+    if (event?.name == "SurveyCreacted") {
+      surveyAddress = event.args[0];
+    }
   });
 
-  console.log(await s.getAnswers());
+  const surveyC = await ethers.getContractFactory("Survey");
+  const signers = await ethers.getSigners();
+  const respondent = signers[0];
+  if (surveyAddress) {
+    const survey = await surveyC.attach(surveyAddress);
+    await survey.connect(respondent);
+    console.log(
+      ethers.formatEther(await ethers.provider.getBalance(respondent)),
+    );
+    const submitTx = await survey.submitAnswer({
+      respondent,
+      answers: [1],
+    });
+    await submitTx.wait();
+    console.log(
+      ethers.formatEther(await ethers.provider.getBalance(respondent)),
+    );
+  }
 });

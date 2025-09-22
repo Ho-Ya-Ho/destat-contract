@@ -15,6 +15,8 @@ contract Survey {
     // contract의 field는 storage에 저장됨
     string public title;
     string public description;
+    uint256 public targetNumber;
+    uint256 public rewardAmount;
     Question[] questions;
     Answer[] answers;
 
@@ -23,10 +25,13 @@ contract Survey {
     constructor(
         string memory _title,
         string memory _description,
+        uint256 _targetNumber,
         Question[] memory _questions
-    ) {
+    ) payable {
         title = _title;
         description = _description;
+        targetNumber = _targetNumber;
+        rewardAmount = msg.value / targetNumber;
         for (uint i = 0; i < _questions.length; i++) {
             questions.push(
                 Question({
@@ -47,10 +52,15 @@ contract Survey {
             _answers.answers.length == questions.length,
             "Number of answers must match number of questions"
         );
+        require(
+            answers.length < targetNumber,
+            "Target number of responses reached"
+        );
 
         answers.push(
             Answer({respondent: msg.sender, answers: _answers.answers})
         );
+        payable(msg.sender).transfer(rewardAmount);
     }
 
     function getAnswers() external view returns (Answer[] memory) {
