@@ -30,4 +30,15 @@ it("Survey_init", async () => {
   expect(_title).eq(title);
   expect(_desc).eq(description);
   expect(_questions[0].options).deep.eq(questions[0].options);
+
+  const signers = await ethers.getSigners();
+  const respondent = signers[1];
+
+  await s.connect(respondent);
+  await s.submitAnswer({
+    respondent: respondent.address,
+    answers: [1],
+  });
+
+  console.log(await s.getAnswers());
 });

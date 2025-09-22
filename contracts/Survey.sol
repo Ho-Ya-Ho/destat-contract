@@ -6,11 +6,17 @@ struct Question {
     string[] options;
 }
 
+struct Answer {
+    address respondent;
+    uint8[] answers;
+}
+
 contract Survey {
     // contract의 field는 storage에 저장됨
     string public title;
     string public description;
     Question[] questions;
+    Answer[] answers;
 
     // primitive: int, bool, uint -> primitive은 memory, storage 키워드를 사용하지 않아도됨
     // memory, storage, calldata
@@ -33,6 +39,22 @@ contract Survey {
             // q.question = _questions[i].question;
             // q.options = _questions[i].options;
         }
+    }
+
+    function submitAnswer(Answer calldata _answers) external {
+        // length validation
+        require(
+            _answers.answers.length == questions.length,
+            "Number of answers must match number of questions"
+        );
+
+        answers.push(
+            Answer({respondent: msg.sender, answers: _answers.answers})
+        );
+    }
+
+    function getAnswers() external view returns (Answer[] memory) {
+        return answers;
     }
 
     function getQuestions() external view returns (Question[] memory) {
