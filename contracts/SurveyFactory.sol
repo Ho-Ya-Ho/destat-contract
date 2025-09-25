@@ -10,7 +10,7 @@ struct SurveySchema {
     Question[] questions;
 }
 
-event SurveyCreacted(address surveyAddress);
+event SurveyCreated(address surveyAddress);
 
 contract SurveyFactory {
     uint256 min_pool_amount;
@@ -43,7 +43,15 @@ contract SurveyFactory {
             _survey.questions
         );
         surveys.push(survey);
-        emit SurveyCreacted(address(survey));
+        emit SurveyCreated(address(survey));
+    }
+
+    function getMinPoolAmount() external view returns (uint256) {
+        return min_pool_amount;
+    }
+
+    function getMinRewardAmount() external view returns (uint256) {
+        return min_reward_amount;
     }
 
     function getSurveys() external view returns (Survey[] memory) {

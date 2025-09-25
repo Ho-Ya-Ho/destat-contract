@@ -38,7 +38,7 @@ it("Survey_init", async () => {
   let surveyAddress;
   receipt?.logs?.forEach((log) => {
     const event = factory.interface.parseLog(log);
-    if (event?.name == "SurveyCreacted") {
+    if (event?.name == "SurveyCreated") {
       surveyAddress = event.args[0];
     }
   });
