@@ -63,7 +63,6 @@ interface Question {
 //   }
 // });
 
-
 it("Survey Storage Layout", async () => {
   const { ethers } = await network.connect();
 
@@ -80,27 +79,43 @@ it("Survey Storage Layout", async () => {
     },
   ];
 
-  const survey = await ethers.deployContract("Survey", [
-      title,
-      description,
-      100,
-      questions,
-      ],
+  const survey = await ethers.deployContract(
+    "Survey",
+    [title, description, 100, questions],
     { value: ethers.parseEther("100") },
   );
 
-  const decodeUni = (hex: string) => Buffer.from(hex.slice(2), 'hex').toString('utf-8');
+  const decodeUni = (hex: string) =>
+    Buffer.from(hex.slice(2), "hex").toString("utf-8");
   const nextHash = (hex: string, i: number) => {
     const n = BigInt(hex) + BigInt(i);
     return "0x" + n.toString(16).padStart(64, "0");
   };
 
-  const slot0Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(0, 32));
-  const slot1Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(1, 32));
-  const slot2Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(2, 32));
-  const slot3Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(3, 32));
-  const slot4Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(4, 32));
-  const slot5Data = await ethers.provider.getStorage(survey.getAddress(), ethers.toBeHex(5, 32));
+  const slot0Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(0, 32),
+  );
+  const slot1Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(1, 32),
+  );
+  const slot2Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(2, 32),
+  );
+  const slot3Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(3, 32),
+  );
+  const slot4Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(4, 32),
+  );
+  const slot5Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(5, 32),
+  );
 
   console.log("primitive types:");
   console.log(slot2Data);
@@ -111,8 +126,8 @@ it("Survey Storage Layout", async () => {
   const pDesc = ethers.keccak256(ethers.toBeHex(1, 32));
   const desc = await ethers.provider.getStorage(
     await survey.getAddress(),
-    pDesc
-  )
+    pDesc,
+  );
   console.log(decodeUni(desc));
 
   console.log("\n---Array types:---");
@@ -139,6 +154,4 @@ it("Survey Storage Layout", async () => {
   console.log("question1_option[]", question1_option_array);
   console.log("question2", question2);
   console.log("question2_option[]", question2_option_array);
-
-
 });
