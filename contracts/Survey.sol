@@ -13,6 +13,7 @@ struct Answer {
 
 contract Survey {
     // contract의 field는 storage에 저장됨
+    // Key-Value Storage
     string public title;
     string public description;
     uint256 public targetNumber;
@@ -21,6 +22,7 @@ contract Survey {
     Answer[] answers;
 
     // primitive: int, bool, uint -> primitive은 memory, storage 키워드를 사용하지 않아도됨
+    // primitive 타입 + string 일 경우 하나의 slot을 나눠서 사용한다 (32bytes보다 작다면)
     // memory, storage, calldata
     constructor(
         string memory _title,
