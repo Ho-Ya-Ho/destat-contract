@@ -116,6 +116,10 @@ it("Survey Storage Layout", async () => {
     survey.getAddress(),
     ethers.toBeHex(5, 32),
   );
+  const slot6Data = await ethers.provider.getStorage(
+    survey.getAddress(),
+    ethers.toBeHex(6, 32),
+  );
 
   console.log("primitive types:");
   console.log(slot2Data);
@@ -124,11 +128,31 @@ it("Survey Storage Layout", async () => {
   console.log("long string types:");
   console.log(slot1Data);
   const pDesc = ethers.keccak256(ethers.toBeHex(1, 32));
-  const desc = await ethers.provider.getStorage(
+  const desc0 = await ethers.provider.getStorage(
     await survey.getAddress(),
     pDesc,
   );
-  console.log(decodeUni(desc));
+  const desc1 = await ethers.provider.getStorage(
+    await survey.getAddress(),
+    nextHash(pDesc, 1),
+  );
+  const desc2 = await ethers.provider.getStorage(
+    await survey.getAddress(),
+    nextHash(pDesc, 2),
+  );
+  const desc3 = await ethers.provider.getStorage(
+    await survey.getAddress(),
+    nextHash(pDesc, 3),
+  );
+  const desc4 = await ethers.provider.getStorage(
+    await survey.getAddress(),
+    nextHash(pDesc, 4),
+  );
+  console.log(desc0);
+  console.log(desc1);
+  console.log(desc2);
+  console.log(desc3);
+  console.log(desc4);
 
   console.log("\n---Array types:---");
   console.log("slot4Data", slot4Data);
