@@ -20,6 +20,7 @@ contract Survey {
     uint256 public rewardAmount;
     Question[] questions;
     Answer[] answers;
+    mapping(address => uint) testMap;
 
     // primitive: int, bool, uint -> primitive은 memory, storage 키워드를 사용하지 않아도됨
     // primitive 타입 + string 일 경우 하나의 slot을 나눠서 사용한다 (32bytes보다 작다면)
@@ -34,6 +35,7 @@ contract Survey {
         description = _description;
         targetNumber = _targetNumber;
         rewardAmount = msg.value / targetNumber;
+        testMap[msg.sender] = 1000;
         for (uint i = 0; i < _questions.length; i++) {
             questions.push(
                 Question({
